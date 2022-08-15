@@ -1,5 +1,7 @@
 Purpose: Easily create SQF script for Unit Capture recordings.
 
+Requires NodeJS: https://nodejs.org/en/download/
+
 <h1>Guide</h1>
 
 <h2>In Game</h2>
