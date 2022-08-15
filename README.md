@@ -71,8 +71,6 @@ In this case the variable will be recorded for 50 seconds at a refresh rate of 3
 <h1>To Do List</h1>
 
 <ul>
-   <li>Apply Validation for post method: Bare Minimum Done</li>
-   <li>Better Interface</li>
    <li>Prevent Duplicate Post Requests</li>
    <li>Error Handling and Redirects</li>
    <li>Drink More Water</li>
