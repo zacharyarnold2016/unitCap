@@ -22,8 +22,10 @@ const homeRouter = () => {
   });
 
   router.get("/dl", (req, res) => {
-    archive();
     res.download("./missionFiles.zip");
+  });
+  router.get("/zip", (req, res) => {
+    archive();
   });
 
   router.post("/", validate, errorResponse, async (req, res) => {

@@ -23,7 +23,7 @@ const archive = () => {
   });
 
   archive.pipe(output);
-  archive.directory("../hosted", false);
+  archive.directory("hosted", false);
   archive.finalize();
 };
 
