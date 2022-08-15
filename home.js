@@ -1,39 +1,47 @@
 import express from "express";
+import fs from "fs";
+import archive from "./functions/archive.js";
 import { errorResponse, validate } from "./validate.js";
-import writeFile from "./writeToFile.js";
+import writeFile from "./functions/writeToFile.js";
+import scripter from "./functions/scripter.js";
 
 const router = express.Router();
-let path;
 
 const homeRouter = () => {
-  router.get("/", (req, res) => {
-    console.log("first");
-    res.render("index");
+  router.get("/", async (req, res) => {
+    const arr = fs.readdirSync("./hosted", (err, files) => {
+      if (err) {
+        throw err;
+      }
+      return files;
+    });
+    console.log(arr);
+    res.render("index", {
+      files: arr,
+    });
   });
+
+  router.get("/dl", (req, res) => {
+    archive();
+    res.download("./missionFiles.zip");
+  });
+
   router.post("/", validate, errorResponse, async (req, res) => {
     try {
-      let script;
-      const { move, pew, name } = req.body;
+      const { move, name } = req.body;
 
-      path = `./hosted/${name}.sqf`;
-
-      if (!pew) {
-        script = `_${name}movedata = ${move};\n
-        _${name}dothings = [${name}, _${name}movedata] spawn BIS_fnc_UnitPlay;\n`;
+      if (!move || !name) {
+        res.send("<h1>You need to Fill the name and move fields</h1>");
       } else {
-        script = `_${name}movedata = ${move};\n
-        _${name}pewdata = ${pew};\n
-        _${name}dothings = [${name}, _${name}movedata] spawn BIS_fnc_UnitPlay;\n
-        [${name}, _${name}pewdata] spawn BIS_fnc_UnitPlayFiring;\n`;
+        const path = `./hosted/${name}.sqf`;
+        const script = scripter(req);
+        await writeFile(path, script);
+        res.send(
+          `<script>alert("File Created"); window.location.href = "/"; </script>`
+        );
       }
-
-      await writeFile(path, script);
-      setTimeout(() => {
-        res.download(path);
-      }, 500);
     } catch (err) {
-      console.log(err);
-      res.send(err.message).redirect("/api");
+      res.send(err.name).redirect("/");
     }
   });
   return router;
